@@ -15,6 +15,7 @@ class AuthServices {
       return result.user;
     } on FirebaseAuthException catch (e) {
       print(e.code);
+      rethrow;
     }
   }
 
