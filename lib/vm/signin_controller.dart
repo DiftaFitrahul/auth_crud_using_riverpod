@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_firebase_riverpod/providers/auth_provider.dart';
-import 'package:learn_firebase_riverpod/vm/login_state.dart';
+import 'package:learn_firebase_riverpod/vm/signin_state.dart';
 
 class LoginController extends StateNotifier<LoginState> {
   LoginController(this.ref) : super(const LoginStateInitial());

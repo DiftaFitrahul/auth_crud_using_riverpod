@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_firebase_riverpod/vm/login_controller.dart';
-import 'package:learn_firebase_riverpod/vm/login_state.dart';
+import 'package:learn_firebase_riverpod/vm/signin_controller.dart';
+import 'package:learn_firebase_riverpod/vm/signin_state.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
