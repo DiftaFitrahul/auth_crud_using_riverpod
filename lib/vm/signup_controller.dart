@@ -10,7 +10,7 @@ class SignupController extends StateNotifier<SignupState> {
     state = const SignupStateLoading();
     try {
       await ref
-          .watch(authServiceProvider)
+          .read(authServiceProvider)
           .signUpWithEmailAndPassword(email, password);
       state = const SignupStateSuccess();
     } catch (e) {

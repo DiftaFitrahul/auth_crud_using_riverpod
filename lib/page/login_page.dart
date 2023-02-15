@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_firebase_riverpod/providers/auth_type_providers.dart';
 import 'package:learn_firebase_riverpod/vm/signin_controller.dart';
 import 'package:learn_firebase_riverpod/vm/signin_state.dart';
+import 'package:learn_firebase_riverpod/vm/signup_state.dart';
+
+import '../vm/signup_controller.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -17,11 +21,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   GlobalKey<FormState> key = GlobalKey<FormState>();
   late TextEditingController emailController;
   late TextEditingController passwordController;
+  late TextEditingController confirmPasswordController;
 
   @override
   void initState() {
     emailController = TextEditingController();
     passwordController = TextEditingController();
+    confirmPasswordController = TextEditingController();
     super.initState();
   }
 
@@ -29,12 +35,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(loginControllerProvider);
+    final isLoadingSignin = ref.watch(loginControllerProvider);
+    final isLoadingSignup = ref.watch(signupControllerProvider);
+    final authType = ref.watch(authTypeProvider);
 
     ref.listen<LoginState>(
         loginControllerProvider,
@@ -76,24 +85,71 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             (value!.isNotEmpty && value.length > 5)
                                 ? null
                                 : 'password is invalid'),
-                    (isLoading is LoginStateLoading)
-                        ? const CircularProgressIndicator()
-                        : ElevatedButton(
-                            onPressed: () {
-                              if (!key.currentState!.validate()) {
-                                return;
-                              }
-
-                              ref.read(loginControllerProvider.notifier).signIn(
-                                  emailController.text,
-                                  passwordController.text);
-                            },
-                            child: const Text('Login')),
+                    if (authType == Type.signUp)
+                      TextFormField(
+                          controller: confirmPasswordController,
+                          decoration: const InputDecoration(
+                              hintText: 'confirm password'),
+                          validator: (value) => (value!.isNotEmpty &&
+                                  value.length > 5 &&
+                                  passwordController.text ==
+                                      confirmPasswordController.text)
+                              ? null
+                              : 'password is invalid'),
+                    buttonToEnter(authType, isLoadingSignin, isLoadingSignup),
+                    SizedBox(
+                        height: 200,
+                        child: TextButton(
+                          onPressed: () {
+                            (authType == Type.signIn)
+                                ? ref.read(authTypeProvider.notifier).signUp()
+                                : ref.read(authTypeProvider.notifier).signIn();
+                          },
+                          child: (authType == Type.signIn)
+                              ? const Text("SignUp")
+                              : const Text("SignIn"),
+                        ))
                   ],
                 ),
               )),
         ),
       ),
     );
+  }
+
+  Widget buttonToEnter(
+    Type type,
+    LoginState isLoadingSignin,
+    SignupState isLoadingSignup,
+  ) {
+    if (type == Type.signIn) {
+      return (isLoadingSignin is LoginStateLoading)
+          ? const CircularProgressIndicator()
+          : ElevatedButton(
+              onPressed: () {
+                if (!key.currentState!.validate()) {
+                  return;
+                }
+
+                ref
+                    .read(loginControllerProvider.notifier)
+                    .signIn(emailController.text, passwordController.text);
+              },
+              child: const Text('Login'));
+    } else {
+      return (isLoadingSignup is SignupStateLoading)
+          ? const CircularProgressIndicator()
+          : ElevatedButton(
+              onPressed: () {
+                if (!key.currentState!.validate()) {
+                  return;
+                }
+
+                ref
+                    .read(signupControllerProvider.notifier)
+                    .signUp(emailController.text, passwordController.text);
+              },
+              child: const Text('Sign up'));
+    }
   }
 }
