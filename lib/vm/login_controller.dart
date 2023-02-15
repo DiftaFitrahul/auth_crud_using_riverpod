@@ -9,6 +9,7 @@ class LoginController extends StateNotifier<LoginState> {
 
   void signIn(String email, String password) async {
     state = const LoginStateLoading();
+    await Future.delayed(const Duration(seconds: 5));
     try {
       await ref
           .read(authServiceProvider)

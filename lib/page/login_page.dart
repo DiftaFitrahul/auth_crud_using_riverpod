@@ -6,14 +6,35 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_firebase_riverpod/vm/login_controller.dart';
 import 'package:learn_firebase_riverpod/vm/login_state.dart';
 
-class LoginPage extends ConsumerWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final GlobalKey<FormState> key = GlobalKey<FormState>();
-    TextEditingController emailController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends ConsumerState<LoginPage> {
+  GlobalKey<FormState> key = GlobalKey<FormState>();
+  late TextEditingController emailController;
+  late TextEditingController passwordController;
+
+  @override
+  void initState() {
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isLoading = ref.watch(loginControllerProvider);
 
     ref.listen<LoginState>(
         loginControllerProvider,
@@ -25,7 +46,6 @@ class LoginPage extends ConsumerWidget {
                     ..showSnackBar(SnackBar(content: Text(next.error)))
                 }
             }));
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Center(
@@ -56,15 +76,19 @@ class LoginPage extends ConsumerWidget {
                             (value!.isNotEmpty && value.length > 5)
                                 ? null
                                 : 'password is invalid'),
-                    ElevatedButton(
-                        onPressed: () {
-                          if (!key.currentState!.validate()) {
-                            return;
-                          }
-                          ref.read(loginControllerProvider.notifier).signIn(
-                              emailController.text, passwordController.text);
-                        },
-                        child: const Text('Login')),
+                    (isLoading is LoginStateLoading)
+                        ? const CircularProgressIndicator()
+                        : ElevatedButton(
+                            onPressed: () {
+                              if (!key.currentState!.validate()) {
+                                return;
+                              }
+
+                              ref.read(loginControllerProvider.notifier).signIn(
+                                  emailController.text,
+                                  passwordController.text);
+                            },
+                            child: const Text('Login')),
                   ],
                 ),
               )),
