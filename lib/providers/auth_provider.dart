@@ -9,4 +9,3 @@ final authServiceProvider = Provider<AuthServices>(
 
 final authStateProvider = StreamProvider<User?>(
     (ref) => ref.read(authServiceProvider).authStateChanges);
-

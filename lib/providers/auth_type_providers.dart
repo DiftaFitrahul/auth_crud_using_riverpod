@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum Type {
   signIn,
   signUp,
-  googleSignIn,
 }
 
 class AuthenticationType extends StateNotifier<Type> {
@@ -15,10 +14,6 @@ class AuthenticationType extends StateNotifier<Type> {
 
   void signUp() {
     state = Type.signUp;
-  }
-
-  void googleSignIn() {
-    state = Type.googleSignIn;
   }
 }
 

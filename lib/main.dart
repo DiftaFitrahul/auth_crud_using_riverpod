@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_firebase_riverpod/firebase_options.dart';
 import 'package:learn_firebase_riverpod/page/auth_checker.dart';
-import 'package:learn_firebase_riverpod/page/login_page.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

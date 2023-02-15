@@ -1,9 +1,9 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_firebase_riverpod/providers/auth_provider.dart';
 import 'package:learn_firebase_riverpod/providers/auth_type_providers.dart';
+import 'package:learn_firebase_riverpod/vm/google_signin_provider.dart';
 import 'package:learn_firebase_riverpod/vm/signin_controller.dart';
 import 'package:learn_firebase_riverpod/vm/signin_state.dart';
 import 'package:learn_firebase_riverpod/vm/signup_state.dart';
@@ -55,6 +55,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ..showSnackBar(SnackBar(content: Text(next.error)))
                 }
             }));
+    ref.listen<SignupState>(
+        signupControllerProvider,
+        ((previous, next) => {
+              if (next is SignupStateError)
+                {
+                  ScaffoldMessenger.of(context)
+                    ..removeCurrentSnackBar()
+                    ..showSnackBar(SnackBar(content: Text(next.error)))
+                }
+            }));
     return Scaffold(
       body: SingleChildScrollView(
         child: Center(
@@ -99,15 +109,32 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     buttonToEnter(authType, isLoadingSignin, isLoadingSignup),
                     SizedBox(
                         height: 200,
-                        child: TextButton(
-                          onPressed: () {
-                            (authType == Type.signIn)
-                                ? ref.read(authTypeProvider.notifier).signUp()
-                                : ref.read(authTypeProvider.notifier).signIn();
-                          },
-                          child: (authType == Type.signIn)
-                              ? const Text("SignUp")
-                              : const Text("SignIn"),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                (authType == Type.signIn)
+                                    ? ref
+                                        .read(authTypeProvider.notifier)
+                                        .signUp()
+                                    : ref
+                                        .read(authTypeProvider.notifier)
+                                        .signIn();
+                              },
+                              child: (authType == Type.signIn)
+                                  ? const Text("SignUp")
+                                  : const Text("SignIn"),
+                            ),
+                            const Text('Or'),
+                            TextButton(
+                                onPressed: () {
+                                  ref
+                                      .read(googleSignInProvider.notifier)
+                                      .signInGoogle();
+                                },
+                                child: const Text("Sign in with Google"))
+                          ],
                         ))
                   ],
                 ),
