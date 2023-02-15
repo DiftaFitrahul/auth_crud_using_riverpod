@@ -1,33 +1,20 @@
-import 'package:equatable/equatable.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_firebase_riverpod/providers/auth_provider.dart';
+import 'package:learn_firebase_riverpod/vm/signup_state.dart';
 
-class SignupState extends Equatable {
-  const SignupState();
+class SignupController extends StateNotifier<SignupState> {
+  SignupController(this.ref) : super(const SignupStateInitial());
+  final Ref ref;
 
-  @override
-  List<Object> get props => [];
-}
-
-class SignupStateInitial extends SignupState {
-  const SignupStateInitial();
-  @override
-  List<Object> get props => [];
-}
-
-class SignupStateLoading extends SignupState {
-  const SignupStateLoading();
-  @override
-  List<Object> get props => [];
-}
-
-class SignupStateSuccess extends SignupState {
-  const SignupStateSuccess();
-  @override
-  List<Object> get props => [];
-}
-
-class SignupStateError extends SignupState {
-  final String error;
-  const SignupStateError(this.error);
-  @override
-  List<Object> get props => [];
+  Future<void> signUp(String email, String password) async {
+    state = const SignupStateLoading();
+    try {
+      await ref
+          .watch(authServiceProvider)
+          .signUpWithEmailAndPassword(email, password);
+      state = const SignupStateSuccess();
+    } catch (e) {
+      state = SignupStateError(e.toString());
+    }
+  }
 }
