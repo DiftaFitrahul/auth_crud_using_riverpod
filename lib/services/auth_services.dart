@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthServices {
   final FirebaseAuth _auth;
@@ -27,6 +28,10 @@ class AuthServices {
     } on FirebaseAuthException {
       rethrow;
     }
+  }
+
+  Future<void> signInWithGoogle() async {
+    final GoogleSignInAccount googleAccount = G
   }
 
   Future<void> signOut() async {
