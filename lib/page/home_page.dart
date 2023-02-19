@@ -1,30 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:learn_firebase_riverpod/page/create_user.dart';
 import 'package:learn_firebase_riverpod/providers/auth_provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Home Page'),
-            Consumer(
-                builder: (context, ref, child) => ElevatedButton(
-                    onPressed: () async {
-                      await ref.read(authServiceProvider).signOut();
-                    },
-                    child: const Text("Log Out")))
-          ],
+        appBar: AppBar(
+          title: const Text('Home Page'),
+          leading: IconButton(
+              onPressed: () async {
+                await ref.read(authServiceProvider).signOut();
+              },
+              icon: const Icon(Icons.logout_outlined)),
         ),
-      ),
-    );
+        body: const CreateUser());
   }
 }
