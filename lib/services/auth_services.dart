@@ -1,5 +1,3 @@
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -8,7 +6,8 @@ class AuthServices {
 
   AuthServices(this._auth);
 
-  Stream<User?> get authStateChanges => _auth.idTokenChanges();
+  Stream<User?> get authStateChanges =>
+      _auth.idTokenChanges();
 
   Future<User?> signInWithEmailandPassword(
       String email, String password) async {
@@ -46,7 +45,6 @@ class AuthServices {
     } on FirebaseAuthException {
       rethrow;
     }
-    
   }
 
   Future<void> signOut() async {
