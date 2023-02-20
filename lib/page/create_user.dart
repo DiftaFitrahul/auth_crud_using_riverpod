@@ -38,68 +38,74 @@ class _CreateUserState extends ConsumerState<CreateUser> {
     //final dataFood = ref.watch(realtimeDatabaseProvider).child('/food');
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: TextField(
-                controller: _controller1,
-                decoration: InputDecoration(
-                    hintText: "Input Name",
-                    errorText: validate ? null : "input can't be empty"),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: TextField(
+                  controller: _controller1,
+                  decoration: InputDecoration(
+                      hintText: "Input Name",
+                      errorText: validate ? null : "input can't be empty"),
+                ),
               ),
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _controller1.text.isEmpty
-                        ? validate = false
-                        : validate = true;
-                  });
-
-                  try {
-                    ref
-                        .watch(realtimeDatabaseProvider)
-                        .child('/orders')
-                        .push()
-                        .set({'name': _controller1.text, 'price': 27000}).then(
-                            (_) => const Text("berhasil tambah data"));
-                  } catch (e) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text(e.toString())));
-                  }
-                },
-                child: const Text("Submit")),
-            ElevatedButton(
-                onPressed: () {
-                  try {
-                    ref.read(realtimeDatabaseProvider).update({
-                      'food/price': 5000,
-                      'food/description':
-                          'The items are laptop, pc, and console',
-                      'food/number': 12,
-                      'anotherFood/price': 2000
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _controller1.text.isEmpty
+                          ? validate = false
+                          : validate = true;
                     });
-                  } catch (e) {
-                    print(e);
-                  }
-                },
-                child: const Text('update data')),
-            const SizedBox(
-              height: 200,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ReadPage(),
-                      ));
-                },
-                child: const Text('go to read page'))
-          ],
+
+                    try {
+                      ref
+                          .watch(realtimeDatabaseProvider)
+                          .child('/orders')
+                          .push()
+                          .set({
+                        'name': _controller1.text,
+                        'description':
+                            'food that very delicious from Yogyakarta',
+                        'price': 27000
+                      }).then((_) => const Text("berhasil tambah data"));
+                    } catch (e) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  },
+                  child: const Text("Submit")),
+              ElevatedButton(
+                  onPressed: () {
+                    try {
+                      ref.read(realtimeDatabaseProvider).update({
+                        'food/price': 4000,
+                        'food/description': 'food that very delicious',
+                        'food/number': 12,
+                        'orders/description': 'good'
+                      });
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                  child: const Text('update data')),
+              const SizedBox(
+                height: 200,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ReadPage(),
+                        ));
+                  },
+                  child: const Text('go to read page'))
+            ],
+          ),
         ),
       ),
     );
