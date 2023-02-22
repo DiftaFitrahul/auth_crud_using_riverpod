@@ -45,6 +45,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final isLoadingSignup = ref.watch(signupControllerProvider);
     final authType = ref.watch(authTypeProvider);
 
+
     ref.listen<LoginState>(
         loginControllerProvider,
         ((previous, next) => {
@@ -133,7 +134,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       .read(googleSignInProvider.notifier)
                                       .signInGoogle();
                                 },
-                                child: const Text("Sign in with Google"))
+                                child: const Text("Sign in with Google")),
+                            
                           ],
                         ))
                   ],

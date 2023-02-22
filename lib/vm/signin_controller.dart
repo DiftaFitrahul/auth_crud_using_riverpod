@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_firebase_riverpod/providers/auth_provider.dart';
 import 'package:learn_firebase_riverpod/vm/signin_state.dart';
@@ -10,9 +11,11 @@ class LoginController extends StateNotifier<LoginState> {
   void signIn(String email, String password) async {
     state = const LoginStateLoading();
     try {
-      await ref
+    await ref
           .read(authServiceProvider)
           .signInWithEmailandPassword(email, password);
+      
+     
       state = const LoginStateSuccess();
     } catch (e) {
       state = LoginStateError(e.toString());

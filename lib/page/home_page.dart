@@ -10,9 +10,10 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Home Page'),
+          title: const Text('Home Page '),
           leading: IconButton(
               onPressed: () async {
+                
                 await ref.read(authServiceProvider).signOut();
               },
               icon: const Icon(Icons.logout_outlined)),

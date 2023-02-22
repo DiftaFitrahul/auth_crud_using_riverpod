@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_firebase_riverpod/page/read_user.dart';
 import 'package:learn_firebase_riverpod/providers/realtimedatabase_providers.dart';
 
+import '../providers/auth_provider.dart';
+
 class CreateUser extends ConsumerStatefulWidget {
   const CreateUser({super.key});
 
@@ -35,6 +37,7 @@ class _CreateUserState extends ConsumerState<CreateUser> {
 
   @override
   Widget build(BuildContext context) {
+    final uId = ref.watch(userUidProvider);
     //final dataFood = ref.watch(realtimeDatabaseProvider).child('/food');
 
     return Scaffold(
@@ -70,7 +73,8 @@ class _CreateUserState extends ConsumerState<CreateUser> {
                         'name': _controller1.text,
                         'description':
                             'food that very delicious from Yogyakarta',
-                        'price': 27000
+                        'price': 27000,
+                        'user_id': uId
                       }).then((_) => const Text("berhasil tambah data"));
                     } catch (e) {
                       ScaffoldMessenger.of(context)
@@ -103,7 +107,8 @@ class _CreateUserState extends ConsumerState<CreateUser> {
                           builder: (context) => const ReadPage(),
                         ));
                   },
-                  child: const Text('go to read page'))
+                  child: const Text('go to read page')),
+              Text("your id is $uId")
             ],
           ),
         ),

@@ -6,8 +6,9 @@ class AuthServices {
 
   AuthServices(this._auth);
 
-  Stream<User?> get authStateChanges =>
-      _auth.idTokenChanges();
+  Stream<User?> get authStateChanges => _auth.idTokenChanges();
+
+  User? get user => FirebaseAuth.instance.currentUser;
 
   Future<User?> signInWithEmailandPassword(
       String email, String password) async {
@@ -31,7 +32,7 @@ class AuthServices {
     }
   }
 
-  Future<void> signInWithGoogle() async {
+  Future<User?> signInWithGoogle() async {
     final GoogleSignInAccount? googleAccount = await GoogleSignIn().signIn();
 
     final GoogleSignInAuthentication googleAuth =
@@ -41,7 +42,8 @@ class AuthServices {
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
     try {
-      await _auth.signInWithCredential(credential);
+      final result = await _auth.signInWithCredential(credential);
+      return result.user;
     } on FirebaseAuthException {
       rethrow;
     }

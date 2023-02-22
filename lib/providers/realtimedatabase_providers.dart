@@ -14,3 +14,5 @@ final realtimeDatabaseProvider = Provider<DatabaseReference>(
 
 final streamFoodProvider = StreamProvider.autoDispose<List<Food>>(
     (ref) => ref.read(databaseProvider).fetchData());
+
+

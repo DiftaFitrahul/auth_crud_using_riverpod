@@ -11,7 +11,13 @@ class RealtimeDatabase {
   DatabaseReference get database => _database;
 
   Stream<List<Food>> fetchData() {
-    final dataFood = _database.child("/orders").onValue;
+    final dataFood = _database
+        .child("/orders")
+        .orderByChild("user_id")
+        .equalTo("xhHSW6VVoLad6UeTi6nVZa6kCe63")
+        .onValue;
+    print(
+        '---------------------------------------------------------------- ${dataFood}');
     final streamData = dataFood.map((event) {
       final dataMap = Map<String, dynamic>.from(event.snapshot.value as Map);
       final dataList = dataMap.entries.map((data) {
