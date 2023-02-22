@@ -1,7 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_firebase_riverpod/providers/auth_provider.dart';
 import 'package:learn_firebase_riverpod/providers/auth_type_providers.dart';
 import 'package:learn_firebase_riverpod/vm/google_signin_provider.dart';
 import 'package:learn_firebase_riverpod/vm/signin_controller.dart';

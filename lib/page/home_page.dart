@@ -17,6 +17,13 @@ class HomePage extends ConsumerWidget {
                 await ref.read(authServiceProvider).signOut();
               },
               icon: const Icon(Icons.logout_outlined)),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, CreateUser.routeName);
+                },
+                icon: const Icon(Icons.add))
+          ],
         ),
         body: const ReadPage());
   }

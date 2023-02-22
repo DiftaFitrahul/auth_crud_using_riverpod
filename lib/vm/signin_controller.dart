@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_firebase_riverpod/providers/auth_provider.dart';
 import 'package:learn_firebase_riverpod/vm/signin_state.dart';

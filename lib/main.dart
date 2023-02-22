@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_firebase_riverpod/firebase_options.dart';
 import 'package:learn_firebase_riverpod/page/auth_checker.dart';
+import 'package:learn_firebase_riverpod/page/create_user.dart';
 
 
 void main() async {
@@ -16,8 +17,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: AuthChecker(),
+    return MaterialApp(
+      home: const AuthChecker(),
+      routes: {
+        CreateUser.routeName : (context) => const CreateUser()
+      },
     );
   }
 }

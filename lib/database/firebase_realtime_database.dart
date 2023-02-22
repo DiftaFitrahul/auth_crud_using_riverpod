@@ -1,7 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_firebase_riverpod/models/data_food.dart';
-import 'package:learn_firebase_riverpod/providers/realtimedatabase_providers.dart';
 
 class RealtimeDatabase {
   final DatabaseReference _database;
@@ -12,15 +10,15 @@ class RealtimeDatabase {
 
   Stream<List<Food>> fetchData(String userId) {
     try {
-      final dataFood = _database.child("/orders").child(userId).onValue;
+      final dataFood = _database.child("orders/$userId").onValue;
       final streamData = dataFood.map((event) {
         final dataMap = Map<String, dynamic>.from(event.snapshot.value as Map);
         final dataList = dataMap.entries.map((data) {
           final food = Map<String, dynamic>.from(data.value as Map);
+          food['itemId'] = data.key;
           return Food.fromRTDB(food);
         }).toList();
         return dataList;
-        
       });
       return streamData;
     } catch (e) {

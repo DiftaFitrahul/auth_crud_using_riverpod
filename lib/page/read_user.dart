@@ -1,12 +1,7 @@
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_firebase_riverpod/database/firebase_realtime_database.dart';
+
 import 'package:learn_firebase_riverpod/models/data_food.dart';
 
 import '../providers/auth_provider.dart';
@@ -21,7 +16,6 @@ class ReadPage extends ConsumerStatefulWidget {
 
 class _ReadPageState extends ConsumerState<ReadPage> {
   String readData = "This is the valueList";
-  late StreamSubscription _descriptionFoodStream;
 
   @override
   void initState() {
@@ -41,21 +35,7 @@ class _ReadPageState extends ConsumerState<ReadPage> {
   }
 
   // continuing fetch data because its stream
-  void streamFetchData() {
-    _descriptionFoodStream = ref
-        .read(realtimeDatabaseProvider)
-        .child('/orders')
-        .onValue
-        .listen((event) {
-      final description =
-          Map<String, dynamic>.from(event.snapshot.value as Map);
-      final foodData = Food.fromRTDB(description);
-
-      setState(() {
-        readData = foodData.foodDetails;
-      });
-    });
-  }
+  void streamFetchData() {}
 
   @override
   void dispose() {
@@ -68,53 +48,64 @@ class _ReadPageState extends ConsumerState<ReadPage> {
     final uId = ref.watch(userUidProvider);
     final liveDataOrders = ref.watch(streamFoodProvider(uId));
     return Scaffold(
-      appBar: AppBar(title: const Text("read data")),
-      body: Column(children: [
-        liveDataOrders.when(
-            data: (data) {
-              List<ListTile> valueList = [];
-              valueList.addAll(data.map((e) => ListTile(
-                    title: Text(e.name),
-                  )));
-              return SizedBox(
-                height: 500,
-                child: ListView(
-                  children: valueList,
-                ),
-              );
-            },
-            error: (error, stackTrace) =>
-                Text(errorDescription(error.toString())),
-            loading: () => const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(),
-                )),
+      body: SingleChildScrollView(
+        child: Column(children: [
+          liveDataOrders.when(
+              data: (data) {
+                List<ListTile> valueList = [];
+                valueList.addAll(data.map((e) => ListTile(
+                      title: Text(e.name),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          try {
+                            ref
+                                .watch(realtimeDatabaseProvider)
+                                .child('orders/$uId')
+                                .child(e.itemId)
+                                .remove();
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(e.toString())));
+                          }
+                        },
+                      ),
+                    )));
+                return SizedBox(
+                  height: 500,
+                  child: ListView(
+                    children: valueList,
+                  ),
+                );
+              },
+              error: (error, stackTrace) =>
+                  Text(errorDescription(error.toString())),
+              loading: () => const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(),
+                  )),
 
-        // StreamBuilder(
-        //   stream: RealtimeDatabase(FirebaseDatabase.instance.ref()).fetchData(),
-        //   builder: (context, snapshot) {
-        //     final tileList = <ListTile>[];
-        //     if (snapshot.connectionState == ConnectionState.waiting) {
-        //       return const CircularProgressIndicator();
-        //     } else if (snapshot.hasData) {
-        //       List<Food>? data = snapshot.data;
-        //       tileList.addAll(data!.map((e) => ListTile(title: Text(e.name))));
-        //     }
-        //     return SizedBox(
-        //       height: 500,
-        //       child: ListView(
-        //         children: tileList,
-        //       ),
-        //     );
-        //   },
-        // ),
-        ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('back'))
-      ]),
+          // StreamBuilder(
+          //   stream: RealtimeDatabase(FirebaseDatabase.instance.ref()).fetchData(),
+          //   builder: (context, snapshot) {
+          //     final tileList = <ListTile>[];
+          //     if (snapshot.connectionState == ConnectionState.waiting) {
+          //       return const CircularProgressIndicator();
+          //     } else if (snapshot.hasData) {
+          //       List<Food>? data = snapshot.data;
+          //       tileList.addAll(data!.map((e) => ListTile(title: Text(e.name))));
+          //     }
+          //     return SizedBox(
+          //       height: 500,
+          //       child: ListView(
+          //         children: tileList,
+          //       ),
+          //     );
+          //   },
+          // ),
+        ]),
+      ),
     );
   }
 

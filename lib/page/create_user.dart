@@ -1,16 +1,12 @@
-import 'dart:async';
-
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:learn_firebase_riverpod/page/read_user.dart';
 import 'package:learn_firebase_riverpod/providers/realtimedatabase_providers.dart';
 
 import '../providers/auth_provider.dart';
 
 class CreateUser extends ConsumerStatefulWidget {
+  static const routeName = './create-user';
   const CreateUser({super.key});
 
   @override
@@ -46,6 +42,9 @@ class _CreateUserState extends ConsumerState<CreateUser> {
     final uId = ref.watch(userUidProvider);
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Create User"),
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -61,11 +60,38 @@ class _CreateUserState extends ConsumerState<CreateUser> {
                       errorText: validate ? null : "input can't be empty"),
                 ),
               ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: TextField(
+                  controller: _description,
+                  decoration: InputDecoration(
+                      hintText: "Input Description",
+                      errorText: validate ? null : "input can't be empty"),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: TextField(
+                  controller: _imageLink,
+                  decoration: InputDecoration(
+                      hintText: "Input Image Link",
+                      errorText: validate ? null : "input can't be empty"),
+                ),
+              ),
               ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      _title.text.isEmpty ? validate = false : validate = true;
+                      _title.text.length <= 3
+                          ? validate = false
+                          : validate = true;
                     });
+                    if (_description.text.length <= 3 ||
+                        _title.text.length <= 3 ||
+                        _imageLink.text.length <= 3) {
+                      return;
+                    }
 
                     try {
                       ref
@@ -76,7 +102,10 @@ class _CreateUserState extends ConsumerState<CreateUser> {
                         'name': _title.text,
                         'description': _description.text,
                         'imageLink': _imageLink.text
-                      }).then((_) => const Text("berhasil tambah data"));
+                      }).then((_) {
+                        FocusScope.of(context).unfocus();
+                        Navigator.pop(context);
+                      });
                     } catch (e) {
                       ScaffoldMessenger.of(context)
                           .showSnackBar(SnackBar(content: Text(e.toString())));
@@ -86,15 +115,6 @@ class _CreateUserState extends ConsumerState<CreateUser> {
               const SizedBox(
                 height: 200,
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ReadPage(),
-                        ));
-                  },
-                  child: const Text('go to read page')),
               Text("your id is $uId")
             ],
           ),
