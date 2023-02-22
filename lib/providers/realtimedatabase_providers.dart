@@ -12,7 +12,7 @@ final realtimeDatabaseProvider = Provider<DatabaseReference>(
   (ref) => RealtimeDatabase(FirebaseDatabase.instance.ref()).database,
 );
 
-final streamFoodProvider = StreamProvider.autoDispose<List<Food>>(
-    (ref) => ref.read(databaseProvider).fetchData());
+final streamFoodProvider = StreamProvider.autoDispose.family<List<Food>, String>(
+    (ref, userId) => ref.read(databaseProvider).fetchData(userId));
 
 

@@ -18,27 +18,32 @@ class CreateUser extends ConsumerStatefulWidget {
 }
 
 class _CreateUserState extends ConsumerState<CreateUser> {
-  late TextEditingController _controller1;
+  late TextEditingController _title;
+  late TextEditingController _description;
+  late TextEditingController _imageLink;
   bool validate = false;
 
   @override
   void initState() {
     validate = true;
-    _controller1 = TextEditingController();
+    _title = TextEditingController();
+    _description = TextEditingController();
+    _imageLink = TextEditingController();
 
     super.initState();
   }
 
   @override
   void dispose() {
-    _controller1.dispose();
+    _title.dispose();
+    _description.dispose();
+    _imageLink.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final uId = ref.watch(userUidProvider);
-    //final dataFood = ref.watch(realtimeDatabaseProvider).child('/food');
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -50,7 +55,7 @@ class _CreateUserState extends ConsumerState<CreateUser> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: TextField(
-                  controller: _controller1,
+                  controller: _title,
                   decoration: InputDecoration(
                       hintText: "Input Name",
                       errorText: validate ? null : "input can't be empty"),
@@ -59,22 +64,18 @@ class _CreateUserState extends ConsumerState<CreateUser> {
               ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      _controller1.text.isEmpty
-                          ? validate = false
-                          : validate = true;
+                      _title.text.isEmpty ? validate = false : validate = true;
                     });
 
                     try {
                       ref
                           .watch(realtimeDatabaseProvider)
-                          .child('/orders')
+                          .child('orders/$uId')
                           .push()
                           .set({
-                        'name': _controller1.text,
-                        'description':
-                            'food that very delicious from Yogyakarta',
-                        'price': 27000,
-                        'user_id': uId
+                        'name': _title.text,
+                        'description': _description.text,
+                        'imageLink': _imageLink.text
                       }).then((_) => const Text("berhasil tambah data"));
                     } catch (e) {
                       ScaffoldMessenger.of(context)
@@ -82,20 +83,6 @@ class _CreateUserState extends ConsumerState<CreateUser> {
                     }
                   },
                   child: const Text("Submit")),
-              ElevatedButton(
-                  onPressed: () {
-                    try {
-                      ref.read(realtimeDatabaseProvider).update({
-                        'food/price': 4000,
-                        'food/description': 'food that very delicious',
-                        'food/number': 12,
-                        'orders/description': 'good'
-                      });
-                    } catch (e) {
-                      print(e);
-                    }
-                  },
-                  child: const Text('update data')),
               const SizedBox(
                 height: 200,
               ),
@@ -116,7 +103,7 @@ class _CreateUserState extends ConsumerState<CreateUser> {
     );
   }
 //  dataFood.set({
-//       'name': _controller1.text,
+//       'name': _title.text,
 //       'price': 120000,
 //     }).then((_) {
 //       ScaffoldMessenger.of(context).showSnackBar(

@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learn_firebase_riverpod/database/firebase_realtime_database.dart';
 import 'package:learn_firebase_riverpod/models/data_food.dart';
 
+import '../providers/auth_provider.dart';
 import '../providers/realtimedatabase_providers.dart';
 
 class ReadPage extends ConsumerStatefulWidget {
@@ -64,7 +65,8 @@ class _ReadPageState extends ConsumerState<ReadPage> {
 
   @override
   Widget build(BuildContext context) {
-    final liveDataOrders = ref.watch(streamFoodProvider);
+    final uId = ref.watch(userUidProvider);
+    final liveDataOrders = ref.watch(streamFoodProvider(uId));
     return Scaffold(
       appBar: AppBar(title: const Text("read data")),
       body: Column(children: [
@@ -81,7 +83,8 @@ class _ReadPageState extends ConsumerState<ReadPage> {
                 ),
               );
             },
-            error: (error, stackTrace) => Text('error'),
+            error: (error, stackTrace) =>
+                Text(errorDescription(error.toString())),
             loading: () => const SizedBox(
                   height: 20,
                   width: 20,
@@ -113,5 +116,13 @@ class _ReadPageState extends ConsumerState<ReadPage> {
             child: const Text('back'))
       ]),
     );
+  }
+
+  String errorDescription(String error) {
+    if (error.contains("Null")) {
+      return "Data is empty";
+    } else {
+      return 'Error is happening';
+    }
   }
 }
