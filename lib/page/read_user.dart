@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:learn_firebase_riverpod/models/data_food.dart';
+import 'package:learn_firebase_riverpod/page/update-user.dart';
 
 import '../providers/auth_provider.dart';
 import '../providers/realtimedatabase_providers.dart';
@@ -54,6 +55,13 @@ class _ReadPageState extends ConsumerState<ReadPage> {
               data: (data) {
                 List<ListTile> valueList = [];
                 valueList.addAll(data.map((e) => ListTile(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UpdateUser(dataUser: e),
+                            ));
+                      },
                       title: Text(e.name),
                       trailing: IconButton(
                         icon: const Icon(Icons.delete),
