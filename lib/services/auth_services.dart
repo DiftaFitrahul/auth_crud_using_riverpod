@@ -3,6 +3,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthServices {
   final FirebaseAuth _auth;
+  final _googleSignIn = GoogleSignIn.standard();
 
   AuthServices(this._auth);
 
@@ -50,6 +51,10 @@ class AuthServices {
   }
 
   Future<void> signOut() async {
-    await _auth.signOut();
+    try {
+      await Future.wait([_auth.signOut(), _googleSignIn.signOut()]);
+    } catch (e) {
+      rethrow;
+    }
   }
 }
